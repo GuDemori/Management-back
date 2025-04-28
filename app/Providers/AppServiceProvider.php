@@ -4,6 +4,11 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
+use App\Domain\Product\Interfaces\ProductRepositoryInterface;
+use App\Repositories\ProductRepository;
+use App\Domain\Product\Interfaces\ProductServiceInterface;
+use App\Domain\Product\Services\ProductService;
+
 use Domain\Stock\Interfaces\StockServiceInterface;
 use Domain\Stock\Interfaces\StockRepositoryInterface;
 use Domain\Stock\Services\StockService;
@@ -23,6 +28,9 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(SupplierRepositoryInterface::class, SupplierRepository::class);
         $this->app->bind(SupplierServiceInterface::class, SupplierService::class);
+
+        $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
+        $this->app->bind(ProductServiceInterface::class, ProductService::class);
     }
 
     public function boot(): void

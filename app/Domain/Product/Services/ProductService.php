@@ -2,8 +2,8 @@
 
 namespace App\Domain\Product\Services;
 
+use App\Domain\Product\DTOs\ProductDTO;
 use App\Models\Product;
-use App\DTOs\ProductDTO;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 

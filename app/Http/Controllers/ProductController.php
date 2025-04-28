@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\DTOs\ProductDTO;
-use App\Services\ProductService;
+use App\Domain\Product\DTOs\ProductDTO;
+use App\Domain\Product\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
