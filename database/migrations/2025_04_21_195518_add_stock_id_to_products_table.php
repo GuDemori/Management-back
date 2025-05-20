@@ -11,9 +11,9 @@ return new class extends Migration {
             $table->unsignedBigInteger('stock_id')->nullable()->after('id');
 
             $table->foreign('stock_id')
-                  ->references('id')
-                  ->on('stocks')
-                  ->onDelete('set null');
+                    ->references('id')
+                    ->on('stocks')
+                    ->onDelete('set null');
         });
     }
 
