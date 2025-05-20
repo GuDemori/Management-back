@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('role')->default('client');
             $table->string('refresh_token')->nullable();
-            $table->timestamp('refresh_token_expiry')->nullable();
+            $table->timestamp('refresh_token_expire')->nullable();
             $table->timestamps();
         });
     }
