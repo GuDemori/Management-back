@@ -70,8 +70,13 @@ class UserController extends Controller
                 'token_type'    => 'Bearer'
             ]);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Credenciais inválidas.'], 401);
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ], 500);
         }
+
     }
 
     public function refresh(Request $request)

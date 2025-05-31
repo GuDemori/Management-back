@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace Domain\User\Services;
 
 use App\Models\User;
 use Carbon\Carbon;
@@ -12,6 +12,7 @@ use Domain\User\Interfaces\UserServiceInterface;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Enums\UserRole;
 
 class UserService implements UserServiceInterface
 {
@@ -21,6 +22,10 @@ class UserService implements UserServiceInterface
 
     public function register(UserCreateDTO $dto): void
     {
+        if (!in_array($dto->role, array_column(UserRole::cases(), 'value'))) {
+            throw new \InvalidArgumentException('Role inválida.');
+        }
+
         $dto = new UserCreateDTO(
             name:       $dto->name,
             email:      $dto->email,
@@ -57,9 +62,9 @@ class UserService implements UserServiceInterface
         $this->repository->saveRefreshToken($user->id, $refreshToken, $refreshExpiresAt);
 
         return new UserAuthResponseDTO(
-            accessToken:    $accessToken,
-            refreshToken:   $refreshToken,
-            expiresIn:      $this->accessTokenTTL($user)
+            accessToken: $accessToken,
+            refreshToken: $refreshToken,
+            expiresIn: $this->accessTokenTTL($user)
         );
     }
 

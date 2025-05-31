@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('state')->nullable();
             $table->string('refresh_token')->nullable();
-            $table->timestamp('refresh_token_expire')->nullable();
+            $table->timestamp('refresh_token_expiry')->nullable();
             $table->timestamps();
         });
     }

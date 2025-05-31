@@ -20,7 +20,7 @@ use App\Repositories\SupplierRepository;
 use Domain\Supplier\Services\SupplierService;
 
 use Domain\User\Interfaces\UserServiceInterface;
-use App\Services\UserService;
+use Domain\User\Services\UserService;
 use Domain\User\Interfaces\UserRepositoryInterface;
 use App\Repositories\UserRepository;
 
