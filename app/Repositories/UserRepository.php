@@ -12,10 +12,18 @@ class UserRepository implements UserRepositoryInterface
     public function create(UserCreateDTO $dto): User
     {
         return User::create([
-            'name'     => $dto->name,
-            'email'    => $dto->email,
-            'password' => $dto->password,
-            'role'     => $dto->role,
+            'name'       => $dto->name,
+            'email'      => $dto->email,
+            'password'   => $dto->password,
+            'role'       => $dto->role,
+            'document'   => $dto->document,
+            'cep'        => $dto->cep,
+            'address'    => $dto->address,
+            'number'     => $dto->number,
+            'complement' => $dto->complement,
+            'district'   => $dto->district,
+            'city'       => $dto->city,
+            'state'      => $dto->state,
         ]);
     }
 
@@ -36,4 +44,13 @@ class UserRepository implements UserRepositoryInterface
     {
         return User::where('refresh_token', $refreshToken)->first();
     }
+
+    public function revokeRefreshToken(int $userId): void
+    {
+        User::where('id', $userId)->update([
+            'refresh_token' => null,
+            'refresh_token_expiry' => null,
+        ]);
+    }
+
 }

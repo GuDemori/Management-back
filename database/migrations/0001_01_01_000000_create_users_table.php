@@ -17,6 +17,14 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('role')->default('client');
+            $table->string('document')->unique();
+            $table->string('cep')->nullable();
+            $table->string('address')->nullable();
+            $table->string('number')->nullable();
+            $table->string('complement')->nullable();
+            $table->string('district')->nullable();
+            $table->string('city')->nullable();
+            $table->string('state')->nullable();
             $table->string('refresh_token')->nullable();
             $table->timestamp('refresh_token_expire')->nullable();
             $table->timestamps();

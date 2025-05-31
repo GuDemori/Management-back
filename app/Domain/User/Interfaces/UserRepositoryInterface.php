@@ -14,4 +14,6 @@ interface UserRepositoryInterface
     public function saveRefreshToken(int $userId, string $refreshToken, \DateTime $expiry): void;
 
     public function getUserByRefreshToken(string $refreshToken): ?User;
+
+    public function revokeRefreshToken(int $userId): void;
 }

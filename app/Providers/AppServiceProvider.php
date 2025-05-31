@@ -19,6 +19,11 @@ use Domain\Supplier\Interfaces\SupplierRepositoryInterface;
 use App\Repositories\SupplierRepository;
 use Domain\Supplier\Services\SupplierService;
 
+use Domain\User\Interfaces\UserServiceInterface;
+use App\Services\UserService;
+use Domain\User\Interfaces\UserRepositoryInterface;
+use App\Repositories\UserRepository;
+
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
@@ -31,10 +36,13 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
         $this->app->bind(ProductServiceInterface::class, ProductService::class);
+
+        $this->app->bind(UserServiceInterface::class, UserService::class);
+        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
     }
 
     public function boot(): void
     {
-        
+
     }
 }

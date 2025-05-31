@@ -13,4 +13,7 @@ interface UserServiceInterface
     public function login(UserLoginDTO $dto): UserAuthResponseDTO;
 
     public function refreshToken(string $refreshToken): UserAuthResponseDTO;
+
+    public function logout(int $userId): void;
+
 }
