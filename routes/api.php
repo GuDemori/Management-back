@@ -14,21 +14,20 @@ Route::post('/refresh', [UserController::class, 'refresh']);
 Route::middleware('auth:api')
         ->post('/logout', [UserController::class, 'logout']);
 
-Route::middleware(['auth:api', CheckRole::class . ':client,coworker,admin'])->group(function () {
+Route::middleware(['auth:api', CheckRole::class . ':client,coworker,admin,v1'])->group(function () {
+
+    Route::get('/users', [UserController::class, 'index']);
     Route::get('/products', [ProductController::class, 'index']);
-    // futuramente: criar pedido apenas pra si
 });
 
 
 Route::middleware(['auth:api', CheckRole::class . ':coworker,admin'])->group(function () {
     Route::get('/stock', [StockController::class, 'index']);
     Route::get('/suppliers', [SupplierController::class, 'index']);
-    // futuramente: criar pedido para qualquer cliente
 });
 
 Route::middleware(['auth:api', CheckRole::class . ':admin'])->group(function () {
     // USERS
-    Route::get('/users', [UserController::class, 'index']);
     Route::post('/users', [UserController::class, 'store']);
     Route::get('/users/{user}', [UserController::class, 'show']);
     Route::put('/users/{user}', [UserController::class, 'update']);
