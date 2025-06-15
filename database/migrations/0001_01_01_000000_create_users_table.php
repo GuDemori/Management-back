@@ -28,7 +28,10 @@ return new class extends Migration
             $table->string('refresh_token')->nullable();
             $table->timestamp('refresh_token_expiry')->nullable();
             $table->timestamps();
+
+            $table->index('email');
         });
+
     }
 
     /**

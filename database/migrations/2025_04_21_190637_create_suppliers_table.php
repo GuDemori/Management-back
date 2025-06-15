@@ -16,7 +16,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
+            $table->string('contact_person')->nullable();
+            $table->string('supplier_type')->nullable();
             $table->timestamps();
+
+            $table->index('supplier_type');
         });
     }
 

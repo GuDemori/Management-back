@@ -11,6 +11,8 @@ return new class extends Migration {
             $table->id();
             $table->string('location')->nullable();
             $table->timestamps();
+
+            $table->index('location');
         });
     }
 
