@@ -20,6 +20,10 @@ class CreateOrderItemsTable extends Migration
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->foreign('product_id')->references('id')->on('products');
+
+            $table->index('order_id');
+            $table->index('product_id');
+
         });
     }
 

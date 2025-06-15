@@ -22,6 +22,9 @@ class CreateOrdersTable extends Migration
             $table->enum('status', ['Em espera', 'Preparando', 'À caminho', 'Entregue', 'Cancelado'])
                     ->default('Em espera');
             $table->timestamps();
+
+            $table->index('client_id');
+            $table->index('status');
         });
     }
 
