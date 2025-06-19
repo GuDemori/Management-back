@@ -22,11 +22,15 @@ class ProductService
     public function create(ProductDTO $data): Product
     {
         return Product::create([
-            'name'         => $data->name,
-            'description'  => $data->description,
-            'price'        => $data->price,
-            'stock_id'     => $data->stock_id,
-            'supplier_id'  => $data->supplier_id,
+            'supplier_id'        => $data->supplier_id,
+            'product_category_id'=> $data->product_category_id,
+            'name'               => $data->name,
+            'nickname'           => $data->nickname,
+            'description'        => $data->description,
+            'image_url'          => $data->image_url,
+            'costs'              => $data->costs,
+            'wholesale_price'    => $data->wholesale_price,
+            'retail_price'       => $data->retail_price,
         ]);
     }
 
@@ -35,11 +39,15 @@ class ProductService
         $product = Product::findOrFail($id);
 
         $product->update([
-            'name'         => $data->name,
-            'description'  => $data->description,
-            'price'        => $data->price,
-            'stock_id'     => $data->stock_id,
-            'supplier_id'  => $data->supplier_id,
+            'supplier_id'        => $data->supplier_id,
+            'product_category_id'=> $data->product_category_id,
+            'name'               => $data->name,
+            'nickname'           => $data->nickname,
+            'description'        => $data->description,
+            'image_url'          => $data->image_url,
+            'costs'              => $data->costs,
+            'wholesale_price'    => $data->wholesale_price,
+            'retail_price'       => $data->retail_price,
         ]);
 
         return $product;

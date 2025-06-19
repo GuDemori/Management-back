@@ -9,12 +9,12 @@ class UpdateEstablishmentTypeRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->role === 'admin';
+        return true;
     }
 
     public function rules(): array
     {
-        $id = $this->route('id');
+        $id = $this->route('establishment_type');
 
         return [
             'name' => [
