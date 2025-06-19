@@ -7,6 +7,7 @@ use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\EstablishmentTypeController;
+use App\Http\Controllers\ProductCategoryController;
 use App\Http\Middleware\CheckRole;
 
 Route::post('/register', [UserController::class, 'register']);
@@ -24,6 +25,12 @@ Route::middleware(['auth:api', CheckRole::class . ':client,coworker,admin,v1'])-
 
     Route::get('/users', [UserController::class, 'index']);
     Route::get('/products', [ProductController::class, 'index']);
+    Route::get('/products/{product}', [ProductController::class, 'show']);
+    Route::get('/product-categories', [ProductCategoryController::class, 'index']);
+    Route::get('/product-categories/{product_category}', [ProductCategoryController::class, 'show']);
+    Route::get('/establishment-types', [EstablishmentTypeController::class, 'index']);
+    Route::get('/establishment-types/{establishment_type}', [EstablishmentTypeController::class, 'show']);
+
 });
 
 /*
@@ -32,8 +39,10 @@ Route::middleware(['auth:api', CheckRole::class . ':client,coworker,admin,v1'])-
 |-----------------------------------------------------------------------
 */
 Route::middleware(['auth:api', CheckRole::class . ':coworker,admin'])->group(function () {
+
     Route::get('/stock', [StockController::class, 'index']);
     Route::get('/suppliers', [SupplierController::class, 'index']);
+
 });
 
 /*
@@ -41,7 +50,8 @@ Route::middleware(['auth:api', CheckRole::class . ':coworker,admin'])->group(fun
 | Rotas apenas para admins
 |-----------------------------------------------------------------------
 */
-Route::middleware(['auth:api', CheckRole::class . ':admin'])->group(function () {
+Route::middleware(['auth:api'/*, CheckRole::class . ':admin'*/])->group(function () {
+
     // USERS
     Route::post('/users', [UserController::class, 'store']);
     Route::get('/users/{user}', [UserController::class, 'show']);
@@ -67,12 +77,13 @@ Route::middleware(['auth:api', CheckRole::class . ':admin'])->group(function () 
 
     // ESTABLISHMENT TYPES
     Route::post('/establishment-types', [EstablishmentTypeController::class, 'store']);
-    Route::get('/establishment-types', [EstablishmentTypeController::class, 'index']);
-    Route::get('/establishment-types/{id}', [EstablishmentTypeController::class, 'show']);
-    Route::put('/establishment-types/{id}', [EstablishmentTypeController::class, 'update']);
-    Route::delete('/establishment-types/{id}', [EstablishmentTypeController::class, 'destroy']);
-});
+    Route::put('/establishment-types/{establishment_type}', [EstablishmentTypeController::class, 'update']);
+    Route::delete('/establishment-types/{establishment_type}', [EstablishmentTypeController::class, 'destroy']);
 
-Route::any('/debug-route', function () {
-    return response()->json(['message' => 'API está viva'], 200);
+
+    // PRODUCT CATEGORIES
+    Route::post('/product-categories', [ProductCategoryController::class, 'store']);
+    Route::put('/product-categories/{product_category}', [ProductCategoryController::class, 'update']);
+    Route::delete('/product-categories/{product_category}',[ProductCategoryController::class, 'destroy']);
+
 });

@@ -25,9 +25,14 @@ use Domain\User\Interfaces\UserRepositoryInterface;
 use App\Repositories\UserRepository;
 
 use App\Domain\EstablishmentType\Interfaces\EstablishmentTypeRepositoryInterface;
-use App\Domain\EstablishmentType\Interfaces\EstablishmentTypeServiceInterface;
 use App\Repositories\EstablishmentTypeRepository;
 use App\Domain\EstablishmentType\Services\EstablishmentTypeService;
+use App\Domain\EstablishmentType\Interfaces\EstablishmentTypeServiceInterface;
+
+use App\Domain\ProductCategory\Interfaces\ProductCategoryRepositoryInterface;
+use App\Domain\ProductCategory\Interfaces\ProductCategoryServiceInterface;
+use App\Domain\ProductCategory\Services\ProductCategoryService;
+use App\Repositories\ProductCategoryRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -47,6 +52,9 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(EstablishmentTypeRepositoryInterface::class, EstablishmentTypeRepository::class);
         $this->app->bind(EstablishmentTypeServiceInterface::class, EstablishmentTypeService::class);
+
+        $this->app->bind(ProductCategoryRepositoryInterface::class, ProductCategoryRepository::class);
+        $this->app->bind(ProductCategoryServiceInterface::class, ProductCategoryService::class);
     }
 
     public function boot(): void

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Domain\Product\DTOs\ProductDTO;
 use App\Domain\Product\Services\ProductService;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -26,16 +28,16 @@ class ProductController extends Controller
         return response()->json($product);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreProductRequest $request): JsonResponse
     {
-        $dto = ProductDTO::fromArray($request->all());
+        $dto = ProductDTO::fromArray($request->validated());
         $product = $this->productService->create($dto);
         return response()->json($product, Response::HTTP_CREATED);
     }
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(UpdateProductRequest $request, int $id): JsonResponse
     {
-        $dto = ProductDTO::fromArray($request->all());
+        $dto = ProductDTO::fromArray($request->validated());
         $product = $this->productService->update($id, $dto);
         return response()->json($product);
     }
