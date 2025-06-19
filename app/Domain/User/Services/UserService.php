@@ -96,8 +96,8 @@ class UserService implements UserServiceInterface
     private function accessTokenTTL(User $user): int
     {
         return match ($user->role) {
-            'admin'     => 2 * 60 * 60,       // 2 horas
-            'client'    => 5 * 24 * 60 * 60,  // 5 dias
+            'admin', 'v1'     => 2 * 60 * 60,       // 2 horas
+            'client', 'coworker'    => 5 * 24 * 60 * 60,  // 5 dias
             default     => 1 * 60 * 60,       // 1 hora
         };
     }
@@ -105,8 +105,8 @@ class UserService implements UserServiceInterface
     private function refreshTokenTTL(User $user): int
     {
         return match ($user->role) {
-            'admin'     => 5 * 24 * 60 * 60,   // 5 dias
-            'client'    => 30 * 24 * 60 * 60,  // 30 dias
+            'admin', 'v1'     => 5 * 24 * 60 * 60,   // 5 dias
+            'client', 'coworker'    => 30 * 24 * 60 * 60,  // 30 dias
             default     => 7 * 24 * 60 * 60,   // 7 dias
         };
     }

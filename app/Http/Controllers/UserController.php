@@ -22,6 +22,11 @@ class UserController extends Controller
         $this->cepLookupService = $cepLookupService;
     }
 
+    public function index(Request $request)
+    {
+        return response()->json($request->user());
+    }
+
     public function register(RegisterUserRequest $request)
     {
         $data = $request->validated();
