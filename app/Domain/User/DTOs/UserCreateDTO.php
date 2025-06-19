@@ -5,11 +5,12 @@ namespace Domain\User\DTOs;
 class UserCreateDTO
 {
     public function __construct(
-        public readonly string $name,
-        public readonly string $email,
-        public readonly string $password,
-        public readonly string $role,
-        public readonly string $document,
+        public readonly ?int    $establishment_type_id,
+        public readonly string  $name,
+        public readonly string  $email,
+        public readonly string  $password,
+        public readonly string  $role,
+        public readonly string  $document,
         public readonly ?string $cep = null,
         public readonly ?string $address = null,
         public readonly ?string $number = null,

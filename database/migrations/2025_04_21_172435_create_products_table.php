@@ -14,11 +14,15 @@ return new class extends Migration
             $table->foreign('supplier_id')
                     ->references('id')->on('suppliers')
                     ->onDelete('set null');
+            $table->unsignedBigInteger('product_category_id');
+            $table->foreign('product_category_id')
+                    ->references('id')->on('product_categories')
+                    ->onDelete('restrict');
             $table->string('name');
             $table->string('nickname')->nullable();
             $table->text('description')->nullable();
             $table->string('image_url')->nullable();
-            $table->decimal('price', 10, 2);
+            $table->decimal('costs', 10, 2);
             $table->decimal('wholesale_price', 10, 2);
             $table->decimal('retail_price', 10, 2);
             $table->timestamps();
@@ -27,6 +31,7 @@ return new class extends Migration
             $table->index('name');
             $table->index('wholesale_price');
             $table->index('retail_price');
+            $table->index('product_category_id');
         });
     }
 
