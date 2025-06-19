@@ -34,6 +34,7 @@ class UserController extends Controller
         $cepData = $this->cepLookupService->buscarEnderecoPorCep($data['cep']);
 
         $dto = new UserCreateDTO(
+            establishment_type_id: $data['establishment_type_id'] ?? null,
             name: $data['name'],
             email: $data['email'],
             password: $data['password'],

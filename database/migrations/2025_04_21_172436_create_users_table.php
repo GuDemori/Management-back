@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('establishment_type_id')
+                    ->nullable();
+            $table->foreign('establishment_type_id')
+                    ->references('id')
+                    ->on('establishment_types')
+                    ->onDelete('set null');
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
@@ -29,7 +35,10 @@ return new class extends Migration
             $table->timestamp('refresh_token_expiry')->nullable();
             $table->timestamps();
 
+            $table->index('name');
             $table->index('email');
+            $table->index('city');
+            $table->index('establishment_type_id');
         });
 
     }

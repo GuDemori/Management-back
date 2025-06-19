@@ -27,18 +27,19 @@ class UserService implements UserServiceInterface
         }
 
         $dto = new UserCreateDTO(
-            name:       $dto->name,
-            email:      $dto->email,
-            password:   bcrypt($dto->password),
-            role:       'client',
-            document:   $dto->document,
-            cep:        $dto->cep,
-            address:    $dto->address,
-            number:     $dto->number,
-            complement: $dto->complement,
-            district:   $dto->district,
-            city:       $dto->city,
-            state:      $dto->state,
+            establishment_type_id: $dto->establishment_type_id,
+            name:                  $dto->name,
+            email:                 $dto->email,
+            password:              bcrypt($dto->password),
+            role:                  'client',
+            document:              $dto->document,
+            cep:                   $dto->cep,
+            address:               $dto->address,
+            number:                $dto->number,
+            complement:            $dto->complement,
+            district:              $dto->district,
+            city:                  $dto->city,
+            state:                 $dto->state,
         );
 
         $this->repository->create($dto);

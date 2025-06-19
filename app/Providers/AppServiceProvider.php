@@ -24,6 +24,11 @@ use Domain\User\Services\UserService;
 use Domain\User\Interfaces\UserRepositoryInterface;
 use App\Repositories\UserRepository;
 
+use App\Domain\EstablishmentType\Interfaces\EstablishmentTypeRepositoryInterface;
+use App\Domain\EstablishmentType\Interfaces\EstablishmentTypeServiceInterface;
+use App\Repositories\EstablishmentTypeRepository;
+use App\Domain\EstablishmentType\Services\EstablishmentTypeService;
+
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
@@ -39,6 +44,9 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(UserServiceInterface::class, UserService::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+
+        $this->app->bind(EstablishmentTypeRepositoryInterface::class, EstablishmentTypeRepository::class);
+        $this->app->bind(EstablishmentTypeServiceInterface::class, EstablishmentTypeService::class);
     }
 
     public function boot(): void
