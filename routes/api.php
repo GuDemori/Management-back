@@ -9,7 +9,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EstablishmentTypeController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Middleware\CheckRole;
+use App\Http\Controllers\CepController;
 
+Route::get('/cep/{cep}', [CepController::class, 'show']);
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/refresh', [UserController::class, 'refresh']);
