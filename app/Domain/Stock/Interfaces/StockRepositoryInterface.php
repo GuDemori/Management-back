@@ -12,4 +12,5 @@ interface StockRepositoryInterface
     public function create(StockDTO $data): StockDTO;
     public function update(int $id, StockDTO $data): StockDTO;
     public function delete(int $id): void;
+
 }

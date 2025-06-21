@@ -10,6 +10,7 @@ use App\Http\Controllers\EstablishmentTypeController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Middleware\CheckRole;
 use App\Http\Controllers\CepController;
+use App\Http\Controllers\ProductStockController;
 
 Route::get('/', function() {
     return response('ok', 200);
@@ -47,6 +48,8 @@ Route::middleware(['auth:api', CheckRole::class . ':coworker,admin'])->group(fun
 
     Route::get('/stock', [StockController::class, 'index']);
     Route::get('/suppliers', [SupplierController::class, 'index']);
+    Route::get('/product-stock', [ProductStockController::class, 'index']);
+    Route::get('/product-stock/{product}/{stock}', [ProductStockController::class, 'show']);
 
 });
 
@@ -55,7 +58,7 @@ Route::middleware(['auth:api', CheckRole::class . ':coworker,admin'])->group(fun
 | Rotas apenas para admins
 |-----------------------------------------------------------------------
 */
-Route::middleware(['auth:api'/*, CheckRole::class . ':admin'*/])->group(function () {
+Route::middleware(['auth:api', CheckRole::class . ':admin'])->group(function () {
 
     // USERS
     Route::post('/users', [UserController::class, 'store']);
@@ -90,5 +93,10 @@ Route::middleware(['auth:api'/*, CheckRole::class . ':admin'*/])->group(function
     Route::post('/product-categories', [ProductCategoryController::class, 'store']);
     Route::put('/product-categories/{product_category}', [ProductCategoryController::class, 'update']);
     Route::delete('/product-categories/{product_category}',[ProductCategoryController::class, 'destroy']);
+
+    // PRODUCT STOCK
+    Route::post('/product-stock', [ProductStockController::class, 'store']);
+    Route::put('/product-stock/{product}/{stock}', [ProductStockController::class, 'update']);
+    Route::delete('/product-stock/{product}/{stock}', [ProductStockController::class, 'destroy']);
 
 });

@@ -15,18 +15,17 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('stock_id');
             $table->integer('quantity')->default(0);
+            $table->integer('min_stock')->default(0);
+            $table->boolean('isActive')->default(true);
             $table->timestamps();
 
             $table->primary(['product_id', 'stock_id']);
 
-            $table->foreign('product_id')
-                ->references('id')->on('products')
-                ->onDelete('cascade');
-            $table->foreign('stock_id')
-                ->references('id')->on('stocks')
-                ->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreign('stock_id')->references('id')->on('stocks')->onDelete('cascade');
 
             $table->index('stock_id');
+            $table->index('product_id');
         });
     }
 

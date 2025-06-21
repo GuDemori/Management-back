@@ -9,10 +9,15 @@ return new class extends Migration {
     {
         Schema::create('stocks', function (Blueprint $table) {
             $table->id();
-            $table->string('location')->nullable();
+            $table->string('cep', 9)->nullable();
+            $table->string('address')->nullable();
+            $table->string('number', 10)->nullable();
+            $table->string('city', 100)->nullable();
+            $table->string('state', 100)->nullable();
+            $table->boolean('isActive')->default(true);
             $table->timestamps();
 
-            $table->index('location');
+            $table->index('city');
         });
     }
 
