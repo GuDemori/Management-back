@@ -11,6 +11,9 @@ use App\Http\Controllers\ProductCategoryController;
 use App\Http\Middleware\CheckRole;
 use App\Http\Controllers\CepController;
 
+Route::get('/', function() {
+    return response('ok', 200);
+});
 Route::get('/cep/{cep}', [CepController::class, 'show']);
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
