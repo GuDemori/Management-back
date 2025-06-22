@@ -19,7 +19,6 @@ return new class extends Migration
                     ->references('id')->on('product_categories')
                     ->onDelete('restrict');
             $table->string('name');
-            $table->string('nickname')->nullable();
             $table->text('description')->nullable();
             $table->string('image_url')->nullable();
             $table->decimal('costs', 10, 2);

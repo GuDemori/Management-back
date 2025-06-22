@@ -25,14 +25,32 @@ class SupplierController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $dto = new SupplierDTO(...$request->only(['name', 'email', 'phone']));
-        return response()->json($this->service->create($dto), 201);
+        $dto = new SupplierDTO(...$request->only([
+            'name',
+            'email',
+            'phone',
+            'document',
+            'city',
+        ]));
+
+        $supplier = $this->service->create($dto);
+
+        return response()->json($supplier, 201);
     }
 
     public function update(Request $request, int $id): JsonResponse
     {
-        $dto = new SupplierDTO(...$request->only(['name', 'email', 'phone']));
-        return response()->json($this->service->update($id, $dto));
+        $dto = new SupplierDTO(...$request->only([
+            'name',
+            'email',
+            'phone',
+            'document',
+            'city',
+        ]));
+
+        $supplier = $this->service->update($id, $dto);
+
+        return response()->json($supplier);
     }
 
     public function destroy(int $id): JsonResponse

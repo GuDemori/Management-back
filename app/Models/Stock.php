@@ -6,5 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Stock extends Model
 {
-    protected $fillable = ['location'];
+    protected $fillable = [
+        'cep',
+        'address',
+        'number',
+        'city',
+        'state',
+        'isActive',
+    ];
+
+    protected $casts = [
+        'isActive' => 'boolean',
+    ];
 }

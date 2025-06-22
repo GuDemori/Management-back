@@ -47,4 +47,11 @@ class ProductController extends Controller
         $this->productService->delete($id);
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
+
+    public function searchByNickname(Request $request): JsonResponse
+    {
+        $term = $request->query('nickname', '');
+        $products = $this->productService->searchByNickname($term);
+        return response()->json($products);
+    }
 }

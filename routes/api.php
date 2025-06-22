@@ -10,16 +10,32 @@ use App\Http\Controllers\EstablishmentTypeController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Middleware\CheckRole;
 use App\Http\Controllers\CepController;
+use App\Http\Controllers\ProductNicknameController;
+use App\Http\Controllers\ProductStockController;
 
 Route::get('/', function() {
     return response('ok', 200);
 });
 Route::get('/cep/{cep}', [CepController::class, 'show']);
+
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/refresh', [UserController::class, 'refresh']);
+
 Route::middleware('auth:api')
         ->post('/logout', [UserController::class, 'logout']);
+Route::get('/products/search', [ProductController::class, 'searchByNickname']);
+Route::get('/products', [ProductController::class, 'index']);
+Route::get('/products/{product}', [ProductController::class, 'show']);
+
+Route::get('/product-categories', [ProductCategoryController::class, 'index']);
+Route::get('/product-categories/{product_category}', [ProductCategoryController::class, 'show']);
+
+Route::get('/product-nicknames', [ProductNicknameController::class, 'index']);
+Route::get('/product-nicknames/{id}', [ProductNicknameController::class, 'show']);
+
+Route::get('/establishment-types', [EstablishmentTypeController::class, 'index']);
+Route::get('/establishment-types/{establishment_type}', [EstablishmentTypeController::class, 'show']);
 
 /*
 |-----------------------------------------------------------------------
@@ -29,12 +45,6 @@ Route::middleware('auth:api')
 Route::middleware(['auth:api', CheckRole::class . ':client,coworker,admin,v1'])->group(function () {
 
     Route::get('/users', [UserController::class, 'index']);
-    Route::get('/products', [ProductController::class, 'index']);
-    Route::get('/products/{product}', [ProductController::class, 'show']);
-    Route::get('/product-categories', [ProductCategoryController::class, 'index']);
-    Route::get('/product-categories/{product_category}', [ProductCategoryController::class, 'show']);
-    Route::get('/establishment-types', [EstablishmentTypeController::class, 'index']);
-    Route::get('/establishment-types/{establishment_type}', [EstablishmentTypeController::class, 'show']);
 
 });
 
@@ -48,6 +58,20 @@ Route::middleware(['auth:api', CheckRole::class . ':coworker,admin'])->group(fun
     Route::get('/stock', [StockController::class, 'index']);
     Route::get('/suppliers', [SupplierController::class, 'index']);
 
+    Route::get('/product-stock', [ProductStockController::class, 'index']);
+    Route::get('/product-stock/{product}/{stock}', [ProductStockController::class, 'show']);
+
+    Route::post  ('/product-stock',               [ProductStockController::class, 'store']);
+    Route::put   ('/product-stock/{product}/{stock}', [ProductStockController::class, 'update']);
+    Route::delete('/product-stock/{product}/{stock}', [ProductStockController::class, 'destroy']);
+
+    Route::get('/products/{product}/nicknames', [ProductNicknameController::class, 'getByProduct']);
+    Route::put('/product-nicknames/{id}', [ProductNicknameController::class, 'update']);
+    Route::delete('/product-nicknames/{id}', [ProductNicknameController::class, 'destroy']);
+
+    Route::post('/product-nicknames', [ProductNicknameController::class, 'store']);
+
+
 });
 
 /*
@@ -55,7 +79,7 @@ Route::middleware(['auth:api', CheckRole::class . ':coworker,admin'])->group(fun
 | Rotas apenas para admins
 |-----------------------------------------------------------------------
 */
-Route::middleware(['auth:api'/*, CheckRole::class . ':admin'*/])->group(function () {
+Route::middleware(['auth:api', CheckRole::class . ':admin'])->group(function () {
 
     // USERS
     Route::post('/users', [UserController::class, 'store']);
@@ -90,5 +114,10 @@ Route::middleware(['auth:api'/*, CheckRole::class . ':admin'*/])->group(function
     Route::post('/product-categories', [ProductCategoryController::class, 'store']);
     Route::put('/product-categories/{product_category}', [ProductCategoryController::class, 'update']);
     Route::delete('/product-categories/{product_category}',[ProductCategoryController::class, 'destroy']);
+
+    // PRODUCT STOCK
+    Route::post('/product-stock', [ProductStockController::class, 'store']);
+    Route::put('/product-stock/{product}/{stock}', [ProductStockController::class, 'update']);
+    Route::delete('/product-stock/{product}/{stock}', [ProductStockController::class, 'destroy']);
 
 });

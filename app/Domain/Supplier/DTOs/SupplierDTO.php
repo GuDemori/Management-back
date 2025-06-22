@@ -8,5 +8,7 @@ class SupplierDTO
         public readonly string $name,
         public readonly ?string $email,
         public readonly ?string $phone,
+        public readonly ?string $document,
+        public readonly ?string $city,
     ) {}
 }

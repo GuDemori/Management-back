@@ -19,13 +19,19 @@ class ProductService
         return Product::findOrFail($id);
     }
 
+    public function searchByNickname(string $term): Collection
+    {
+        return Product::whereHas('nicknames', function ($q) use ($term) {
+            $q->where('nickname', 'like', "%{$term}%");
+        })->get();
+    }
+
     public function create(ProductDTO $data): Product
     {
         return Product::create([
             'supplier_id'        => $data->supplier_id,
             'product_category_id'=> $data->product_category_id,
             'name'               => $data->name,
-            'nickname'           => $data->nickname,
             'description'        => $data->description,
             'image_url'          => $data->image_url,
             'costs'              => $data->costs,
@@ -42,7 +48,6 @@ class ProductService
             'supplier_id'        => $data->supplier_id,
             'product_category_id'=> $data->product_category_id,
             'name'               => $data->name,
-            'nickname'           => $data->nickname,
             'description'        => $data->description,
             'image_url'          => $data->image_url,
             'costs'              => $data->costs,
