@@ -27,11 +27,12 @@ class SupplierService implements SupplierServiceInterface
     public function create(SupplierDTO $data): Supplier
     {
         return $this->repository->create([
-            'name'     => $data->name,
-            'email'    => $data->email,
-            'phone'    => $data->phone,
-            'document' => $data->document,
-            'city'     => $data->city,
+            'name'         => $data->name,
+            'company_name' => $data->companyName,
+            'email'        => $data->email,
+            'phone'        => $data->phone,
+            'document'     => $data->document,
+            'city'         => $data->city,
         ]);
     }
 
@@ -44,11 +45,12 @@ class SupplierService implements SupplierServiceInterface
         }
 
         return $this->repository->update($supplier, [
-            'name'     => $data->name,
-            'email'    => $data->email,
-            'phone'    => $data->phone,
-            'document' => $data->document,
-            'city'     => $data->city,
+            'name'         => $data->name,
+            'company_name' => $data->companyName,
+            'email'        => $data->email,
+            'phone'        => $data->phone,
+            'document'     => $data->document,
+            'city'         => $data->city,
         ]);
     }
 
