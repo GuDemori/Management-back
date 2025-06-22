@@ -5,7 +5,8 @@ namespace App\Domain\Product\Services;
 use App\Domain\Product\DTOs\ProductDTO;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class ProductService
 {
@@ -28,15 +29,20 @@ class ProductService
 
     public function create(ProductDTO $data): Product
     {
+        if ($data->image instanceof UploadedFile) {
+            $path = Storage::disk('s3')->putFile('products', $data->image, 'public');
+            $data->image_url = Storage::disk('s3')->url($path);
+        }
+
         return Product::create([
-            'supplier_id'        => $data->supplier_id,
-            'product_category_id'=> $data->product_category_id,
-            'name'               => $data->name,
-            'description'        => $data->description,
-            'image_url'          => $data->image_url,
-            'costs'              => $data->costs,
-            'wholesale_price'    => $data->wholesale_price,
-            'retail_price'       => $data->retail_price,
+            'supplier_id'         => $data->supplier_id,
+            'product_category_id' => $data->product_category_id,
+            'name'                => $data->name,
+            'description'         => $data->description,
+            'image_url'           => $data->image_url,
+            'costs'               => $data->costs,
+            'wholesale_price'     => $data->wholesale_price,
+            'retail_price'        => $data->retail_price,
         ]);
     }
 
@@ -44,15 +50,20 @@ class ProductService
     {
         $product = Product::findOrFail($id);
 
+        if ($data->image instanceof UploadedFile) {
+            $path = Storage::disk('s3')->putFile('products', $data->image, 'public');
+            $data->image_url = Storage::disk('s3')->url($path);
+        }
+
         $product->update([
-            'supplier_id'        => $data->supplier_id,
-            'product_category_id'=> $data->product_category_id,
-            'name'               => $data->name,
-            'description'        => $data->description,
-            'image_url'          => $data->image_url,
-            'costs'              => $data->costs,
-            'wholesale_price'    => $data->wholesale_price,
-            'retail_price'       => $data->retail_price,
+            'supplier_id'         => $data->supplier_id,
+            'product_category_id' => $data->product_category_id,
+            'name'                => $data->name,
+            'description'         => $data->description,
+            'image_url'           => $data->image_url,
+            'costs'               => $data->costs,
+            'wholesale_price'     => $data->wholesale_price,
+            'retail_price'        => $data->retail_price,
         ]);
 
         return $product;

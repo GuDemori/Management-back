@@ -18,6 +18,7 @@ class StoreProductRequest extends FormRequest
             'product_category_id' => 'required|exists:product_categories,id',
             'name'                => 'required|string|max:255',
             'description'         => 'nullable|string',
+            'image'               => 'nullable|file|image|mimes:jpg,jpeg,png,webp|max:10240',
             'image_url'           => 'nullable|url|max:255',
             'costs'               => 'required|numeric|min:0',
             'wholesale_price'     => 'required|numeric|min:0',
@@ -46,6 +47,9 @@ class StoreProductRequest extends FormRequest
             'retail_price.required'        => 'O preço de varejo é obrigatório.',
             'retail_price.numeric'         => 'O preço de varejo deve ser um valor numérico.',
             'retail_price.min'             => 'O preço de varejo não pode ser negativo.',
+            'image.image'    => 'O arquivo enviado deve ser uma imagem.',
+            'image.max'      => 'A imagem não pode exceder 10MB.',
+            'image.mimes'    => 'A imagem deve estar nos formatos: jpg, jpeg, png ou webp.',
         ];
     }
 }
