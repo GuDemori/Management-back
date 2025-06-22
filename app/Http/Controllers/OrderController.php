@@ -59,13 +59,17 @@ class OrderController extends Controller
             addressCity: $client->address_city,
             addressState: $client->address_state,
             addressZipcode: $client->address_zipcode,
-            items: collect($request->input('items'))->map(fn ($item) => new OrderItemDTO(
-                productId: $item['product_id'],
-                productName: $item['product_name'],
-                quantity: $item['quantity'],
-                priceUnit: $item['price_unit'],
-                subtotal: $item['quantity'] * $item['price_unit']
-            ))->toArray()
+            items: collect($request->input('items'))->map(function ($item) {
+                $product = \App\Models\Product::findOrFail($item['product_id']);
+                $price = $product->retail_price;
+                return new OrderItemDTO(
+                    productId: $product->id,
+                    productName: $product->name,
+                    quantity: $item['quantity'],
+                    priceUnit: $price,
+                    subtotal: $item['quantity'] * $price
+                );
+            })->toArray()
         );
 
         $order = $this->orderService->create($dto);
