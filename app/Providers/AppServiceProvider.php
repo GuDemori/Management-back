@@ -33,8 +33,13 @@ use App\Domain\ProductCategory\Interfaces\ProductCategoryRepositoryInterface;
 use App\Domain\ProductCategory\Interfaces\ProductCategoryServiceInterface;
 use App\Domain\ProductCategory\Services\ProductCategoryService;
 use App\Repositories\ProductCategoryRepository;
-use App\Repositories\ProductStockRepository;
 
+use App\Repositories\ProductNicknameRepository;
+use App\Domain\Product\Interfaces\ProductNicknameRepositoryInterface;
+use App\Domain\Product\Interfaces\ProductNicknameServiceInterface;
+use App\Domain\Product\Services\ProductNicknameService;
+
+use App\Repositories\ProductStockRepository;
 use Domain\ProductStock\Interfaces\ProductStockRepositoryInterface;
 use Domain\ProductStock\Interfaces\ProductStockServiceInterface;
 use Domain\ProductStock\Services\ProductStockService;
@@ -63,10 +68,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(ProductStockRepositoryInterface::class, ProductStockRepository::class);
         $this->app->bind(ProductStockServiceInterface::class, ProductStockService::class);
+
+        $this->app->bind(ProductNicknameRepositoryInterface::class, ProductNicknameRepository::class);
+        $this->app->bind(ProductNicknameServiceInterface::class, ProductNicknameService::class);
     }
 
-    public function boot(): void
-    {
-
-    }
+    public function boot(): void {}
 }

@@ -10,7 +10,6 @@ class Product extends Model
         'supplier_id',
         'product_category_id',
         'name',
-        'nickname',
         'description',
         'image_url',
         'costs',
@@ -26,6 +25,11 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(ProductCategory::class, 'product_category_id');
+    }
+
+    public function nicknames()
+    {
+        return $this->hasMany(ProductNickname::class);
     }
 
 }
