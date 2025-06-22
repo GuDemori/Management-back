@@ -44,6 +44,15 @@ use Domain\ProductStock\Interfaces\ProductStockRepositoryInterface;
 use Domain\ProductStock\Interfaces\ProductStockServiceInterface;
 use Domain\ProductStock\Services\ProductStockService;
 
+use App\Domain\Order\Interfaces\OrderServiceInterface;
+use App\Domain\Order\Services\OrderService;
+use App\Domain\Order\Interfaces\OrderRepositoryInterface;
+use App\Repositories\OrderRepository;
+use App\Domain\Order\Interfaces\OrderStatusHistoryRepositoryInterface;
+use App\Repositories\OrderStatusHistoryRepository;
+use App\Domain\Order\Interfaces\OrderItemHistoryRepositoryInterface;
+use App\Repositories\OrderItemHistoryRepository;
+
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
@@ -71,6 +80,12 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(ProductNicknameRepositoryInterface::class, ProductNicknameRepository::class);
         $this->app->bind(ProductNicknameServiceInterface::class, ProductNicknameService::class);
+
+        $this->app->bind(OrderServiceInterface::class, OrderService::class);
+        $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
+        $this->app->bind(OrderStatusHistoryRepositoryInterface::class, OrderStatusHistoryRepository::class);
+        $this->app->bind(OrderItemHistoryRepositoryInterface::class, OrderItemHistoryRepository::class);
+
     }
 
     public function boot(): void {}

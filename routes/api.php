@@ -10,6 +10,7 @@ use App\Http\Controllers\EstablishmentTypeController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Middleware\CheckRole;
 use App\Http\Controllers\CepController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductNicknameController;
 use App\Http\Controllers\ProductStockController;
 
@@ -42,9 +43,13 @@ Route::get('/establishment-types/{establishment_type}', [EstablishmentTypeContro
 | Rotas para todos os usuários autenticados (client, coworker, admin)
 |-----------------------------------------------------------------------
 */
-Route::middleware(['auth:api', CheckRole::class . ':client,coworker,admin,v1'])->group(function () {
+Route::middleware(['auth:api', CheckRole::class . ':client,coworker,admin'])->group(function () {
 
     Route::get('/users', [UserController::class, 'index']);
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('/orders/{id}', [OrderController::class, 'show']);
+    Route::post('/orders', [OrderController::class, 'store']);
+    Route::put('/orders/{id}', [OrderController::class, 'update']);
 
 });
 
