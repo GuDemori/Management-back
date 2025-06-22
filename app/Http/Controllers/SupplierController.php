@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreSupplierRequest;
+use App\Http\Requests\UpdateSupplierRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Domain\Supplier\Interfaces\SupplierServiceInterface;
@@ -23,10 +25,11 @@ class SupplierController extends Controller
         return response()->json($this->service->findById($id));
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StoreSupplierRequest $request): JsonResponse
     {
         $dto = new SupplierDTO(...$request->only([
             'name',
+            'company_name',
             'email',
             'phone',
             'document',
@@ -38,10 +41,12 @@ class SupplierController extends Controller
         return response()->json($supplier, 201);
     }
 
-    public function update(Request $request, int $id): JsonResponse
+
+    public function update(UpdateSupplierRequest $request, int $id): JsonResponse
     {
         $dto = new SupplierDTO(...$request->only([
             'name',
+            'company_name',
             'email',
             'phone',
             'document',
