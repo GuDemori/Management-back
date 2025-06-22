@@ -19,7 +19,7 @@ class CreateOrdersTable extends Migration
             $table->string('client_address_state')->nullable();
             $table->string('client_address_zipcode')->nullable();
             $table->decimal('total_value', 10, 2)->default(0);
-            $table->enum('status', ['Em espera', 'Preparando', 'À caminho', 'Entregue', 'Cancelado'])
+            $table->enum('status', ['Em espera', 'Preparando', 'À caminho', 'Entregue', 'Pago', 'Cancelado'])
                     ->default('Em espera');
             $table->timestamps();
 
