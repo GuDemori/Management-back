@@ -2,6 +2,8 @@
 
 namespace App\Domain\Product\DTOs;
 
+use Illuminate\Http\UploadedFile;
+
 class ProductDTO
 {
     public function __construct(
@@ -13,6 +15,7 @@ class ProductDTO
         public float $costs,
         public float $wholesale_price,
         public float $retail_price,
+        public ?UploadedFile $image,
     ) {}
 
     public static function fromArray(array $data): self
@@ -26,6 +29,7 @@ class ProductDTO
             costs: (float) $data['costs'],
             wholesale_price: (float) $data['wholesale_price'],
             retail_price: (float) $data['retail_price'],
+            image: $data['image'] ?? null,
         );
     }
 }
