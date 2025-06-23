@@ -30,7 +30,7 @@ class ProductService
     public function create(ProductDTO $data): Product
     {
         if ($data->image instanceof UploadedFile) {
-            $path = Storage::disk('s3')->putFile('products', $data->image, 'public');
+            $path = Storage::disk('s3')->putFile('products', $data->image);
             $data->image_url = Storage::disk('s3')->url($path);
         }
 
@@ -51,7 +51,7 @@ class ProductService
         $product = Product::findOrFail($id);
 
         if ($data->image instanceof UploadedFile) {
-            $path = Storage::disk('s3')->putFile('products', $data->image, 'public');
+            $path = Storage::disk('s3')->putFile('products', $data->image);
             $data->image_url = Storage::disk('s3')->url($path);
         }
 
