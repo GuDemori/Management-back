@@ -24,7 +24,15 @@ class ProductStockController extends Controller
 
     public function store(Request $request)
     {
-        $dto = ProductStockDTO::fromArray($this->validateData($request));
+        $data = $request->validate([
+            'product_id' => 'required|integer|exists:products,id',
+            'stock_id'   => 'required|integer|exists:stocks,id',
+            'quantity'   => 'required|integer|min:0',
+            'min_stock'  => 'nullable|integer|min:0',
+            'isActive'   => 'boolean',
+        ]);
+
+        $dto = ProductStockDTO::fromArray($data);
         $created = $this->service->create($dto);
 
         return response()->json($created, 201);

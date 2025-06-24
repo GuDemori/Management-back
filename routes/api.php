@@ -71,6 +71,7 @@ Route::middleware(['auth:api', CheckRole::class . ':coworker,admin'])->group(fun
     Route::delete('/product-stock/{product}/{stock}', [ProductStockController::class, 'destroy']);
 
     Route::get('/products/{product}/nicknames', [ProductNicknameController::class, 'getByProduct']);
+    Route::put('/products/{product}/nicknames', [ProductController::class, 'updateNicknames']);
     Route::put('/product-nicknames/{id}', [ProductNicknameController::class, 'update']);
     Route::delete('/product-nicknames/{id}', [ProductNicknameController::class, 'destroy']);
 

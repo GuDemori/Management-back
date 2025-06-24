@@ -6,6 +6,7 @@ use App\Domain\Product\DTOs\ProductDTO;
 use App\Domain\Product\Services\ProductService;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -32,6 +33,11 @@ class ProductController extends Controller
     {
         $dto = ProductDTO::fromArray($request->validated());
         $product = $this->productService->create($dto);
+        if (isset($data['nicknames'])) {
+            foreach ($data['nicknames'] as $nickname) {
+                $product->nicknames()->create(['nickname' => $nickname]);
+            }
+        }
         return response()->json($product, Response::HTTP_CREATED);
     }
 
@@ -39,7 +45,30 @@ class ProductController extends Controller
     {
         $dto = ProductDTO::fromArray($request->validated());
         $product = $this->productService->update($id, $dto);
+        if (isset($data['nicknames'])) {
+            foreach ($data['nicknames'] as $nickname) {
+                $product->nicknames()->create(['nickname' => $nickname]);
+            }
+        }
         return response()->json($product);
+    }
+
+    public function updateNicknames(Request $request, Product $product)
+    {
+        $request->validate([
+            'nicknames'   => 'required|array',
+            'nicknames.*' => 'required|string|max:255',
+        ]);
+
+        $product->nicknames()->delete();
+
+        foreach ($request->nicknames as $nickname) {
+            $product->nicknames()->create([
+                'nickname' => $nickname,
+            ]);
+        }
+
+        return response()->json(['message' => 'Apelidos atualizados.']);
     }
 
     public function destroy(int $id): JsonResponse
