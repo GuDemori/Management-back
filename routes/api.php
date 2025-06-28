@@ -13,15 +13,34 @@ use App\Http\Controllers\CepController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductNicknameController;
 use App\Http\Controllers\ProductStockController;
+use Illuminate\Support\Facades\Artisan;
 
 Route::get('/', function() {
     return response('ok', 200);
 });
+
+Route::get('/schedule-runner', function (Request $request) {
+    if ($request->query('key') !== env('SCHEDULE_KEY')) {
+        abort(403, 'Acesso não autorizado');
+    }
+
+    Artisan::call('schedule:run');
+
+    return response()->json([
+        'status' => 'ok',
+        'executed' => now()->toDateTimeString(),
+    ]);
+});
+
 Route::get('/cep/{cep}', [CepController::class, 'show']);
 
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/refresh', [UserController::class, 'refresh']);
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user(); // Retorna os dados do usuário autenticado
+});
+
 
 Route::middleware('auth:api')
         ->post('/logout', [UserController::class, 'logout']);

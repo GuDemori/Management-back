@@ -10,11 +10,30 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductService
 {
-    public function getAll(): Collection
+    public function getAll(?int $stockId = null): Collection
     {
-        return Product::with(['supplier', 'category', 'nicknames'])
-            ->where('is_active', true)
-            ->get();    }
+        $query = Product::query()
+            ->with(['supplier', 'category', 'nicknames'])
+            ->where('is_active', true);
+    
+        if ($stockId) {
+            $query->withSum(['productStocks as stock_quantity' => function ($q) use ($stockId) {
+                $q->where('is_active', true)->where('stock_id', $stockId);
+            }], 'quantity');
+
+            $query->whereHas('productStocks', function ($q) use ($stockId) {
+                $q->where('stock_id', $stockId)->where('is_active', true);
+            });
+        } else {
+            $query->withSum(['productStocks as stock_quantity' => function ($q) {
+                $q->where('is_active', true);
+            }], 'quantity');
+        }
+
+        return $query->get();
+    }
+
+
 
     public function getById(int $id): Product
     {
@@ -75,5 +94,4 @@ class ProductService
         $product = Product::findOrFail($id);
         $product->update(['is_active' => false]);
     }
-
 }

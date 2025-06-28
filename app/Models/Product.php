@@ -32,4 +32,9 @@ class Product extends Model
         return $this->hasMany(ProductNickname::class);
     }
 
+    public function productStocks()
+    {
+        return $this->hasMany(ProductStock::class);
+    }
+
 }
