@@ -12,12 +12,13 @@ class ProductService
 {
     public function getAll(): Collection
     {
-        return Product::all();
-    }
+        return Product::with(['supplier', 'category', 'nicknames'])
+            ->where('is_active', true)
+            ->get();    }
 
     public function getById(int $id): Product
     {
-        return Product::findOrFail($id);
+        return Product::with(['supplier', 'category', 'nicknames'])->findOrFail($id);
     }
 
     public function searchByNickname(string $term): Collection
@@ -72,6 +73,7 @@ class ProductService
     public function delete(int $id): void
     {
         $product = Product::findOrFail($id);
-        $product->delete();
+        $product->update(['is_active' => false]);
     }
+
 }
