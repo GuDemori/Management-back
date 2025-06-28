@@ -96,6 +96,7 @@ Route::middleware(['auth:api', CheckRole::class . ':admin'])->group(function () 
     // PRODUCTS
     Route::post('/products', [ProductController::class, 'store']);
     Route::put('/products/{product}', [ProductController::class, 'update']);
+    Route::put('/products/{product}/deactivate', [ProductController::class, 'deactivate']);
     Route::delete('/products/{product}', [ProductController::class, 'destroy']);
 
     // SUPPLIERS
