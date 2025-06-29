@@ -44,14 +44,14 @@ class SupplierController extends Controller
 
     public function update(UpdateSupplierRequest $request, int $id): JsonResponse
     {
-        $dto = new SupplierDTO(...$request->only([
-            'name',
-            'company_name',
-            'email',
-            'phone',
-            'document',
-            'city',
-        ]));
+        $dto = new SupplierDTO(
+            name: $request->input('name'),
+            companyName: $request->input('company_name'),
+            email: $request->input('email'),
+            phone: $request->input('phone'),
+            document: $request->input('document'),
+            city: $request->input('city'),
+        );
 
         $supplier = $this->service->update($id, $dto);
 
