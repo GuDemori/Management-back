@@ -53,12 +53,12 @@ class OrderController extends Controller
         $dto = new OrderCreateDTO(
             clientId: $client->id,
             clientName: $client->name,
-            addressStreet: $client->address_street,
-            addressNumber: $client->address_number,
-            addressDistrict: $client->address_district,
-            addressCity: $client->address_city,
-            addressState: $client->address_state,
-            addressZipcode: $client->address_zipcode,
+            addressStreet: $client->address,
+            addressNumber: $client->number,
+            addressDistrict: $client->district,
+            addressCity: $client->city,
+            addressState: $client->state,
+            addressZipcode: $client->cep,
             items: collect($request->input('items'))->map(function ($item) {
                 $product = \App\Models\Product::findOrFail($item['product_id']);
                 $price = $product->retail_price;

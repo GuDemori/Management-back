@@ -16,4 +16,7 @@ interface UserRepositoryInterface
     public function getUserByRefreshToken(string $refreshToken): ?User;
 
     public function revokeRefreshToken(int $userId): void;
+
+    public function findById(int $id): ?User;
+
 }

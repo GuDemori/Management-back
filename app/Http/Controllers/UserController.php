@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RegisterUserRequest;
+use App\Models\User;
 use App\Services\CepLookupService;
 use Domain\User\DTOs\UserCreateDTO;
 use Domain\User\DTOs\UserLoginDTO;
@@ -25,6 +26,19 @@ class UserController extends Controller
     public function index(Request $request)
     {
         return response()->json($request->user());
+    }
+
+    public function getClients(Request $request)
+    {
+        $user = $request->user();
+
+        if (!in_array($user->role, ['admin', 'coworker'])) {
+            return response()->json(['message' => 'Acesso não autorizado.'], 403);
+        }
+
+        $clients = User::where('role', 'client')->get();
+
+        return response()->json($clients);
     }
 
     public function register(RegisterUserRequest $request)
@@ -118,4 +132,14 @@ class UserController extends Controller
         return response()->json(['message' => 'Logout realizado com sucesso.']);
     }
 
+    public function show(int $id)
+    {
+        $user = $this->userService->findById($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'Usuário não encontrado.'], 404);
+        }
+
+        return response()->json($user);
+    }
 }
