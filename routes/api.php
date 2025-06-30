@@ -81,6 +81,7 @@ Route::middleware(['auth:api', CheckRole::class . ':coworker,admin'])->group(fun
     Route::get('/users/{user}', [UserController::class, 'show']);
 
     Route::get('/stock', [StockController::class, 'index']);
+    Route::put('/stock/{stock}/deactivate', [StockController::class, 'deactivate']);
 
     Route::get('/suppliers', [SupplierController::class, 'index']);
 
