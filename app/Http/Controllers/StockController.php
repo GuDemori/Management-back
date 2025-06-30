@@ -80,4 +80,27 @@ class StockController extends Controller
 
         return $data;
     }
+
+    public function deactivate(int $id)
+    {
+        $stock = $this->stockService->find($id);
+
+        if (! $stock) {
+            return response()->json(['message' => 'Estoque não encontrado.'], 404);
+        }
+
+        $dto = new StockDTO(
+            id: $stock->id,
+            cep: $stock->cep,
+            address: $stock->address,
+            number: $stock->number,
+            city: $stock->city,
+            state: $stock->state,
+            isActive: false
+        );
+
+        $updated = $this->stockService->update($id, $dto);
+
+        return response()->json($updated);
+    }
 }
