@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Artisan;
 Route::get('/', function() {
     return response('ok', 200);
 });
-
 Route::get('/schedule-runner', function (Request $request) {
     if ($request->query('key') !== env('SCHEDULE_KEY')) {
         abort(403, 'Acesso não autorizado');
@@ -33,13 +32,13 @@ Route::get('/schedule-runner', function (Request $request) {
 });
 
 Route::get('/cep/{cep}', [CepController::class, 'show']);
-
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/refresh', [UserController::class, 'refresh']);
 Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user(); // Retorna os dados do usuário autenticado
+    return $request->user();
 });
+Route::middleware('auth:api')->get('/users/clients', [UserController::class, 'getClients']);
 
 
 Route::middleware('auth:api')
@@ -79,21 +78,22 @@ Route::middleware(['auth:api', CheckRole::class . ':client,coworker,admin'])->gr
 */
 Route::middleware(['auth:api', CheckRole::class . ':coworker,admin'])->group(function () {
 
+    Route::get('/users/{user}', [UserController::class, 'show']);
+
     Route::get('/stock', [StockController::class, 'index']);
+
     Route::get('/suppliers', [SupplierController::class, 'index']);
 
     Route::get('/product-stock', [ProductStockController::class, 'index']);
     Route::get('/product-stock/{product}/{stock}', [ProductStockController::class, 'show']);
-
-    Route::post  ('/product-stock',               [ProductStockController::class, 'store']);
-    Route::put   ('/product-stock/{product}/{stock}', [ProductStockController::class, 'update']);
+    Route::post('/product-stock',               [ProductStockController::class, 'store']);
+    Route::put('/product-stock/{product}/{stock}', [ProductStockController::class, 'update']);
     Route::delete('/product-stock/{product}/{stock}', [ProductStockController::class, 'destroy']);
 
     Route::get('/products/{product}/nicknames', [ProductNicknameController::class, 'getByProduct']);
     Route::put('/products/{product}/nicknames', [ProductController::class, 'updateNicknames']);
     Route::put('/product-nicknames/{id}', [ProductNicknameController::class, 'update']);
     Route::delete('/product-nicknames/{id}', [ProductNicknameController::class, 'destroy']);
-
     Route::post('/product-nicknames', [ProductNicknameController::class, 'store']);
 
 
@@ -108,7 +108,6 @@ Route::middleware(['auth:api', CheckRole::class . ':admin'])->group(function () 
 
     // USERS
     Route::post('/users', [UserController::class, 'store']);
-    Route::get('/users/{user}', [UserController::class, 'show']);
     Route::put('/users/{user}', [UserController::class, 'update']);
     Route::delete('/users/{user}', [UserController::class, 'destroy']);
 

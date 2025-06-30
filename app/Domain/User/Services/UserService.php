@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Enums\UserRole;
+use Domain\User\DTOs\UserDTO;
 
 class UserService implements UserServiceInterface
 {
@@ -109,5 +110,12 @@ class UserService implements UserServiceInterface
             'client', 'coworker'    => 30 * 24 * 60 * 60,  // 30 dias
             default     => 7 * 24 * 60 * 60,   // 7 dias
         };
+    }
+
+    public function findById(int $id): ?UserDTO
+    {
+        $user = $this->repository->findById($id);
+
+        return $user ? UserDTO::fromModel($user) : null;
     }
 }
