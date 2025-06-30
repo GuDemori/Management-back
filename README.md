@@ -27,13 +27,13 @@ cp .env.example .env
 ### 3. Suba os containers
 
 ```bash
-docker compose up -d --build
+docker compose -f docker-compose.dev.yml up -d --build
 ```
 
 ### 4. Acesse o container da aplicação
 
 ```bash
-docker compose exec app bash
+docker compose -f docker-compose.dev.yml exec app bash
 ```
 
 ### 5. Instale as dependências
@@ -67,8 +67,8 @@ Configure sua ferramenta (como Antares SQL ou DBeaver) com os dados abaixo:
 - Host: localhost
 - Porta: 3306
 - Usuário: manager
-- Senha: 123456
 - Banco: product_management
+- Senha: 123456
 
 ## Testando a API
 
