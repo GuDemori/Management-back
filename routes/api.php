@@ -38,8 +38,6 @@ Route::post('/refresh', [UserController::class, 'refresh']);
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::middleware('auth:api')->get('/users/clients', [UserController::class, 'getClients']);
-
 
 Route::middleware('auth:api')
         ->post('/logout', [UserController::class, 'logout']);
@@ -79,6 +77,9 @@ Route::middleware(['auth:api', CheckRole::class . ':client,coworker,admin'])->gr
 Route::middleware(['auth:api', CheckRole::class . ':coworker,admin'])->group(function () {
 
     Route::get('/users/{user}', [UserController::class, 'show']);
+
+    Route::get('/clients', [UserController::class, 'clients']);
+    Route::put('/clients/{id}', [UserController::class, 'update']);
 
     Route::get('/stock', [StockController::class, 'index']);
     Route::put('/stock/{stock}/deactivate', [StockController::class, 'deactivate']);

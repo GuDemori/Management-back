@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Enums\UserRole;
 use Domain\User\DTOs\UserDTO;
+use Illuminate\Support\Collection;
 
 class UserService implements UserServiceInterface
 {
@@ -118,4 +119,10 @@ class UserService implements UserServiceInterface
 
         return $user ? UserDTO::fromModel($user) : null;
     }
+
+    public function listClients(): Collection
+    {
+        return $this->repository->getAllClients();
+    }
+
 }

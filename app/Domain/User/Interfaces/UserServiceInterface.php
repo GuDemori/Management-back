@@ -5,6 +5,7 @@ namespace Domain\User\Interfaces;
 use Domain\User\DTOs\UserCreateDTO;
 use Domain\User\DTOs\UserLoginDTO;
 use Domain\User\DTOs\UserAuthResponseDTO;
+use Illuminate\Support\Collection;
 
 interface UserServiceInterface
 {
@@ -16,4 +17,5 @@ interface UserServiceInterface
 
     public function logout(int $userId): void;
 
+    public function listClients(): Collection;
 }

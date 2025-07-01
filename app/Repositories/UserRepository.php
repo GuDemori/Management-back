@@ -6,6 +6,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Domain\User\DTOs\UserCreateDTO;
 use Domain\User\Interfaces\UserRepositoryInterface;
+use Illuminate\Support\Collection;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -26,6 +27,14 @@ class UserRepository implements UserRepositoryInterface
             'city'                  => $dto->city,
             'state'                 => $dto->state,
         ]);
+    }
+
+    public function getAllClients(): Collection
+    {
+        return User::where('role', 'client')
+            ->where('is_active', true)
+            ->with('establishmentType')
+            ->get();
     }
 
     public function findByEmail(string $email): ?User
