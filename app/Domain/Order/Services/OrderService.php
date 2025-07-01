@@ -16,6 +16,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderItemHistory;
 use App\Models\OrderStatusHistory;
+use Domain\ProductStock\Interfaces\ProductStockRepositoryInterface;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -24,9 +25,10 @@ use Illuminate\Support\Facades\Log;
 class OrderService implements OrderServiceInterface
 {
     public function __construct(
-        protected OrderRepositoryInterface $orderRepository,
-        protected OrderStatusHistoryRepositoryInterface $statusHistoryRepository,
-        protected OrderItemHistoryRepositoryInterface $itemHistoryRepository
+        private readonly OrderRepositoryInterface $orderRepository,
+        private readonly OrderItemHistoryRepositoryInterface $itemHistoryRepository,
+        private readonly OrderStatusHistoryRepositoryInterface $statusHistoryRepository,
+        private readonly ProductStockRepositoryInterface $productStockRepository
     ) {}
 
     public function create(OrderCreateDTO $dto): OrderResponseDTO
@@ -195,6 +197,22 @@ class OrderService implements OrderServiceInterface
                     $order->status = $dto->newStatus->value;
                 }
 
+                // Débito de estoque se ainda não foi feito
+                if (
+                    in_array($order->status, [OrderStatus::Entregue->value, OrderStatus::Pago->value]) &&
+                    !$order->is_stock_debited
+                ) {
+                    foreach ($order->items as $item) {
+                        $stockId = 1; // ou lógica para buscar o estoque correto
+                        $productStock = $this->productStockRepository->find($item->product_id, $stockId);
+
+                        $productStock->quantity -= $item->quantity;
+                        $this->productStockRepository->update($productStock);
+                    }
+
+                    $order->is_stock_debited = true;
+                }
+
                 $this->orderRepository->update($order);
 
                 Log::info('Pedido atualizado com sucesso', ['order_id' => $order->id]);
@@ -211,6 +229,7 @@ class OrderService implements OrderServiceInterface
             throw $e;
         }
     }
+
 
     public function findById(int $id): OrderResponseDTO
     {
