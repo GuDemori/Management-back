@@ -11,6 +11,7 @@ use Domain\User\Interfaces\UserServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class UserController extends Controller
 {
@@ -243,5 +244,66 @@ class UserController extends Controller
 
             return response()->json(['message' => 'Erro ao atualizar usuário.'], 500);
         }
+    }
+
+    public function listAll(): JsonResponse
+    {
+        try {
+            $users = User::with('establishmentType')
+                ->whereIn('role', ['admin', 'coworker'])
+                ->get();
+
+            return response()->json($users);
+        } catch (Throwable $e) {
+            Log::error('Erro ao listar usuários (admin/coworker)', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user' => auth()->id(),
+            ]);
+
+            return response()->json([
+                'message' => 'Erro ao buscar usuários.',
+            ], 500);
+        }
+    }
+
+
+    public function destroy(User $user): JsonResponse
+    {
+        try {
+            $user->is_active = false;
+            $user->save();
+
+            Log::info("Usuário desativado com sucesso", [
+                'admin_id' => auth()->id(),
+                'user_id' => $user->id,
+                'user_email' => $user->email,
+            ]);
+
+            return response()->json([
+                'message' => 'Usuário desativado com sucesso.'
+            ]);
+        } catch (Throwable $e) {
+            Log::error("Erro ao desativar usuário", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => $user->id ?? null,
+                'admin_id' => auth()->id(),
+            ]);
+
+            return response()->json([
+                'message' => 'Erro ao desativar usuário.'
+            ], 500);
+        }
+    }
+
+    public function deactivateClient(int $id): JsonResponse
+    {
+        $client = User::where('role', 'client')->findOrFail($id);
+
+        $client->is_active = false;
+        $client->save();
+
+        return response()->json(['message' => 'Cliente desativado com sucesso.']);
     }
 }

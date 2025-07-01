@@ -76,6 +76,7 @@ Route::middleware(['auth:api', CheckRole::class . ':client,coworker,admin'])->gr
 */
 Route::middleware(['auth:api', CheckRole::class . ':coworker,admin'])->group(function () {
 
+    Route::get('/users/all', [UserController::class, 'listAll']);
     Route::get('/users/{user}', [UserController::class, 'show']);
 
     Route::get('/clients', [UserController::class, 'clients']);
@@ -112,6 +113,8 @@ Route::middleware(['auth:api', CheckRole::class . ':admin'])->group(function () 
     Route::post('/users', [UserController::class, 'store']);
     Route::put('/users/{user}', [UserController::class, 'update']);
     Route::delete('/users/{user}', [UserController::class, 'destroy']);
+
+    Route::delete('/clients/{id}', [UserController::class, 'deactivateClient']);
 
     // PRODUCTS
     Route::post('/products', [ProductController::class, 'store']);
