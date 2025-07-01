@@ -13,11 +13,19 @@ class StoreOrderRequest extends FormRequest
 
     public function rules(): array
     {
-        $isClient = auth()->user()->role === 'client';
+        $user = auth()->user();
+        $isClient = $user->role === 'client';
 
         return [
-            'client_id' => $isClient ? 'prohibited' : 'required|exists:users,id',
-            'items' => 'required|array|min:1',
+            'client_id' => [
+                'required',
+                'exists:users,id',
+                function ($attribute, $value, $fail) use ($isClient, $user) {
+                    if ($isClient && $value != $user->id) {
+                        $fail('Clientes só podem criar pedidos em seu próprio nome.');
+                    }
+                },
+            ],            'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.product_name' => 'required|string',
             'items.*.quantity' => 'required|integer|min:1',
