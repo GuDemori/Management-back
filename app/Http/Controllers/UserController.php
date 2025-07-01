@@ -8,6 +8,7 @@ use App\Services\CepLookupService;
 use Domain\User\DTOs\UserCreateDTO;
 use Domain\User\DTOs\UserLoginDTO;
 use Domain\User\Interfaces\UserServiceInterface;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -142,4 +143,25 @@ class UserController extends Controller
 
         return response()->json($user);
     }
+
+    public function clients(): JsonResponse
+    {
+        return response()->json($this->userService->listClients());
+    }
+
+    public function update(Request $request, int $id)
+    {
+        $data = $request->all();
+
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'Usuário não encontrado.'], 404);
+        }
+
+        $user->update($data);
+
+        return response()->json(['message' => 'Usuário atualizado com sucesso.']);
+    }
+
 }

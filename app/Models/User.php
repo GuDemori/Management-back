@@ -56,4 +56,10 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    public function establishmentType()
+    {
+        return $this->belongsTo(EstablishmentType::class);
+    }
+
 }

@@ -4,6 +4,7 @@ namespace Domain\User\Interfaces;
 
 use Domain\User\DTOs\UserCreateDTO;
 use App\Models\User;
+use Illuminate\Support\Collection;
 
 interface UserRepositoryInterface
 {
@@ -19,4 +20,5 @@ interface UserRepositoryInterface
 
     public function findById(int $id): ?User;
 
+    public function getAllClients(): Collection;
 }
