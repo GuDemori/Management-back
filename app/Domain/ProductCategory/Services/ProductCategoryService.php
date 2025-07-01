@@ -5,6 +5,8 @@ namespace App\Domain\ProductCategory\Services;
 use App\Domain\ProductCategory\DTOs\ProductCategoryDTO;
 use App\Domain\ProductCategory\Interfaces\ProductCategoryServiceInterface;
 use App\Domain\ProductCategory\Interfaces\ProductCategoryRepositoryInterface;
+use InvalidArgumentException;
+use RuntimeException;
 
 class ProductCategoryService implements ProductCategoryServiceInterface
 {
@@ -33,7 +35,7 @@ class ProductCategoryService implements ProductCategoryServiceInterface
     public function create(ProductCategoryDTO $dto): ProductCategoryDTO
     {
         if ($this->repository->findByCode($dto->code)) {
-            throw new \InvalidArgumentException('Product category code already exists.');
+            throw new InvalidArgumentException('Product category code already exists.');
         }
 
         return $this->repository->create($dto);
@@ -43,11 +45,11 @@ class ProductCategoryService implements ProductCategoryServiceInterface
     {
         $existing = $this->repository->findById($dto->id);
         if (! $existing) {
-            throw new \RuntimeException('Product category not found.');
+            throw new RuntimeException('Product category not found.');
         }
 
         if ($dto->code !== $existing->code && $this->repository->findByCode($dto->code)) {
-            throw new \InvalidArgumentException('Product category code already in use.');
+            throw new InvalidArgumentException('Product category code already in use.');
         }
 
         return $this->repository->update($dto);
@@ -57,7 +59,7 @@ class ProductCategoryService implements ProductCategoryServiceInterface
     {
         $existing = $this->repository->findById($id);
         if (! $existing) {
-            throw new \RuntimeException('Product category not found.');
+            throw new RuntimeException('Product category not found.');
         }
 
         return $this->repository->delete($id);

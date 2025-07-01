@@ -15,6 +15,8 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Enums\UserRole;
 use Domain\User\DTOs\UserDTO;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class UserService implements UserServiceInterface
 {
@@ -24,75 +26,141 @@ class UserService implements UserServiceInterface
 
     public function register(UserCreateDTO $dto): void
     {
-        if (!in_array($dto->role, array_column(UserRole::cases(), 'value'))) {
-            throw new \InvalidArgumentException('Role inválida.');
+        try {
+            Log::info('Iniciando registro de usuário', ['email' => $dto->email]);
+
+            if (!in_array($dto->role, array_column(UserRole::cases(), 'value'))) {
+                Log::warning('Tentativa de registro com role inválida', ['role' => $dto->role]);
+                throw new \InvalidArgumentException('Role inválida.');
+            }
+
+            $dto = new UserCreateDTO(
+                establishment_type_id: $dto->establishment_type_id,
+                name: $dto->name,
+                email: $dto->email,
+                password: bcrypt($dto->password),
+                role: 'client',
+                document: $dto->document,
+                cep: $dto->cep,
+                address: $dto->address,
+                number: $dto->number,
+                complement: $dto->complement,
+                district: $dto->district,
+                city: $dto->city,
+                state: $dto->state,
+            );
+
+            $this->repository->create($dto);
+
+            Log::info('Usuário registrado com sucesso', ['email' => $dto->email]);
+        } catch (Throwable $e) {
+            Log::error('Erro ao registrar usuário', [
+                'email' => $dto->email ?? null,
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            throw $e;
         }
-
-        $dto = new UserCreateDTO(
-            establishment_type_id: $dto->establishment_type_id,
-            name:                  $dto->name,
-            email:                 $dto->email,
-            password:              bcrypt($dto->password),
-            role:                  'client',
-            document:              $dto->document,
-            cep:                   $dto->cep,
-            address:               $dto->address,
-            number:                $dto->number,
-            complement:            $dto->complement,
-            district:              $dto->district,
-            city:                  $dto->city,
-            state:                 $dto->state,
-        );
-
-        $this->repository->create($dto);
     }
 
     public function login(UserLoginDTO $dto): UserAuthResponseDTO
     {
-        $user = $this->repository->findByEmail($dto->email);
+        try {
+            Log::info('Tentativa de login', ['email' => $dto->email]);
 
-        if (!$user || !Hash::check($dto->password, $user->password)) {
-            throw new \Exception('Credenciais inválidas');
+            $user = $this->repository->findByEmail($dto->email);
+
+            if (!$user || !Hash::check($dto->password, $user->password)) {
+                Log::warning('Login falhou - credenciais inválidas', ['email' => $dto->email]);
+                throw new \Exception('Credenciais inválidas');
+            }
+
+            $accessToken = JWTAuth::fromUser($user, [
+                'exp' => Carbon::now()->addSeconds($this->accessTokenTTL($user))->timestamp
+            ]);
+
+            $refreshToken = Str::uuid()->toString();
+            $refreshExpiresAt = Carbon::now()->addSeconds($this->refreshTokenTTL($user));
+
+            $this->repository->saveRefreshToken($user->id, $refreshToken, $refreshExpiresAt);
+
+            Log::info('Login bem-sucedido', ['user_id' => $user->id]);
+
+            return new UserAuthResponseDTO(
+                accessToken: $accessToken,
+                refreshToken: $refreshToken,
+                expiresIn: $this->accessTokenTTL($user)
+            );
+        } catch (Throwable $e) {
+            Log::error('Erro no login', [
+                'email' => $dto->email,
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            throw $e;
         }
-
-        $accessToken = JWTAuth::fromUser($user, [
-            'exp' => Carbon::now()->addSeconds($this->accessTokenTTL($user))->timestamp
-        ]);
-
-        $refreshToken = Str::uuid()->toString();
-        $refreshExpiresAt = Carbon::now()->addSeconds($this->refreshTokenTTL($user));
-
-        $this->repository->saveRefreshToken($user->id, $refreshToken, $refreshExpiresAt);
-
-        return new UserAuthResponseDTO(
-            accessToken: $accessToken,
-            refreshToken: $refreshToken,
-            expiresIn: $this->accessTokenTTL($user)
-        );
     }
 
     public function refreshToken(string $refreshToken): UserAuthResponseDTO
     {
-        $user = $this->repository->getUserByRefreshToken($refreshToken);
+        try {
+            Log::info('Tentativa de refresh token', ['refresh_token' => $this->maskToken($refreshToken)]);
 
-        if (!$user || Carbon::now()->greaterThan($user->refresh_token_expiry)) {
-            throw new \Exception('Refresh token expirado ou inválido');
+            $user = $this->repository->getUserByRefreshToken($refreshToken);
+
+            if (!$user || Carbon::now()->greaterThan($user->refresh_token_expiry)) {
+                Log::warning('Refresh token inválido ou expirado', [
+                    'refresh_token' => $this->maskToken($refreshToken),
+                    'user_id' => $user?->id
+                ]);
+                throw new \Exception('Refresh token expirado ou inválido');
+            }
+
+            $accessToken = JWTAuth::fromUser($user, [
+                'exp' => Carbon::now()->addSeconds($this->accessTokenTTL($user))->timestamp
+            ]);
+
+            Log::info('Access token gerado com sucesso via refresh', ['user_id' => $user->id]);
+
+            return new UserAuthResponseDTO(
+                accessToken: $accessToken,
+                refreshToken: $refreshToken,
+                expiresIn: $this->accessTokenTTL($user)
+            );
+        } catch (Throwable $e) {
+            Log::error('Erro ao processar refresh token', [
+                'refresh_token' => $this->maskToken($refreshToken),
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            throw $e;
         }
+    }
 
-        $accessToken = JWTAuth::fromUser($user, [
-            'exp' => Carbon::now()->addSeconds($this->accessTokenTTL($user))->timestamp
-        ]);
-
-        return new UserAuthResponseDTO(
-            accessToken:    $accessToken,
-            refreshToken:   $refreshToken,
-            expiresIn:      $this->accessTokenTTL($user)
-        );
+    private function maskToken(string $token): string
+    {
+        return substr($token, 0, 4) . '****';
     }
 
     public function logout(int $userId): void
     {
-        $this->repository->revokeRefreshToken($userId);
+        try {
+            Log::info('Logout solicitado', ['user_id' => $userId]);
+
+            $this->repository->revokeRefreshToken($userId);
+
+            Log::info('Logout realizado com sucesso', ['user_id' => $userId]);
+        } catch (Throwable $e) {
+            Log::error('Erro ao realizar logout', [
+                'user_id' => $userId,
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 
     private function accessTokenTTL(User $user): int
@@ -115,14 +183,28 @@ class UserService implements UserServiceInterface
 
     public function findById(int $id): ?UserDTO
     {
-        $user = $this->repository->findById($id);
+        try {
+            $user = $this->repository->findById($id);
 
-        return $user ? UserDTO::fromModel($user) : null;
+            if (!$user) {
+                Log::warning('Usuário não encontrado', ['user_id' => $id]);
+                return null;
+            }
+
+            Log::info('Usuário encontrado com sucesso', ['user_id' => $id]);
+            return UserDTO::fromModel($user);
+        } catch (Throwable $e) {
+            Log::error('Erro ao buscar usuário por ID', [
+                'user_id' => $id,
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
     }
 
     public function listClients(): Collection
     {
         return $this->repository->getAllClients();
     }
-
 }

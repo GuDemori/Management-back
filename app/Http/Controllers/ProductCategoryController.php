@@ -7,6 +7,8 @@ use App\Domain\ProductCategory\Interfaces\ProductCategoryServiceInterface;
 use App\Http\Requests\StoreProductCategoryRequest;
 use App\Http\Requests\UpdateProductCategoryRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class ProductCategoryController extends Controller
 {
@@ -19,54 +21,173 @@ class ProductCategoryController extends Controller
 
     public function index(): JsonResponse
     {
-        $categories = $this->service->all();
-        return response()->json($categories);
+        try {
+            Log::info('[CategoriaProduto] Iniciando listagem', [
+                'user_id' => auth()->id()
+            ]);
+
+            $categories = $this->service->all();
+
+            Log::info('[CategoriaProduto] Listagem concluída', [
+                'total' => count($categories)
+            ]);
+
+            return response()->json($categories);
+        } catch (Throwable $e) {
+            Log::error('[CategoriaProduto] Erro ao listar categorias', [
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'message' => 'Erro ao listar categorias de produto.'
+            ], 500);
+        }
     }
+
 
     public function store(StoreProductCategoryRequest $request): JsonResponse
     {
-        $dto = new ProductCategoryDTO(
-            id: null,
-            name: $request->validated()['name'],
-            code: $request->validated()['code']
-        );
+        try {
+            $validated = $request->validated();
 
-        $created = $this->service->create($dto);
-        return response()->json($created, 201);
+            Log::info('[CategoriaProduto] Iniciando criação', [
+                'user_id' => auth()->id(),
+                'name'    => $validated['name'],
+                'code'    => $validated['code']
+            ]);
+
+            $dto = new ProductCategoryDTO(
+                id: null,
+                name: $validated['name'],
+                code: $validated['code']
+            );
+
+            $created = $this->service->create($dto);
+
+            Log::info('[CategoriaProduto] Categoria criada com sucesso', [
+                'category_id' => $created->id ?? null
+            ]);
+
+            return response()->json($created, 201);
+        } catch (Throwable $e) {
+            Log::error('[CategoriaProduto] Erro ao criar categoria', [
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'message' => 'Erro ao criar categoria de produto.'
+            ], 500);
+        }
     }
+
 
     public function show(int $id): JsonResponse
     {
-        $category = $this->service->findById($id);
-        if (! $category) {
-            return response()->json(['message' => 'Product category not found'], 404);
+        try {
+            Log::info('[CategoriaProduto] Iniciando busca por categoria', [
+                'category_id' => $id,
+                'user_id'     => auth()->id()
+            ]);
+
+            $category = $this->service->findById($id);
+
+            if (! $category) {
+                Log::warning('[CategoriaProduto] Categoria não encontrada', [
+                    'category_id' => $id
+                ]);
+
+                return response()->json(['message' => 'Categoria de produto não encontrada'], 404);
+            }
+
+            Log::info('[CategoriaProduto] Categoria encontrada com sucesso', [
+                'category_id' => $id
+            ]);
+
+            return response()->json($category);
+        } catch (Throwable $e) {
+            Log::error('[CategoriaProduto] Erro ao buscar categoria', [
+                'category_id' => $id,
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json(['message' => 'Erro ao buscar categoria de produto.'], 500);
         }
-        return response()->json($category);
     }
 
     public function update(UpdateProductCategoryRequest $request, int $id): JsonResponse
     {
-        $dto = new ProductCategoryDTO(
-            id: $id,
-            name: $request->validated()['name'],
-            code: $request->validated()['code']
-        );
+        try {
+            Log::info('[CategoriaProduto] Iniciando atualização da categoria', [
+                'category_id' => $id,
+                'user_id'     => auth()->id()
+            ]);
 
-        $success = $this->service->update($dto);
-        if (! $success) {
-            return response()->json(['message' => 'Unable to update product category'], 400);
+            $dto = new ProductCategoryDTO(
+                id: $id,
+                name: $request->validated()['name'],
+                code: $request->validated()['code']
+            );
+
+            $success = $this->service->update($dto);
+
+            if (! $success) {
+                Log::warning('[CategoriaProduto] Falha ao atualizar categoria', [
+                    'category_id' => $id
+                ]);
+
+                return response()->json(['message' => 'Não foi possível atualizar a categoria de produto'], 400);
+            }
+
+            Log::info('[CategoriaProduto] Categoria atualizada com sucesso', [
+                'category_id' => $id
+            ]);
+
+            return response()->json(['message' => 'Categoria de produto atualizada com sucesso']);
+        } catch (Throwable $e) {
+            Log::error('[CategoriaProduto] Erro ao atualizar categoria', [
+                'category_id' => $id,
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json(['message' => 'Erro ao atualizar categoria de produto.'], 500);
         }
-
-        return response()->json(['message' => 'Product category updated successfully']);
     }
 
     public function destroy(int $id): JsonResponse
     {
-        $success = $this->service->delete($id);
-        if (! $success) {
-            return response()->json(['message' => 'Unable to delete product category'], 400);
-        }
+        try {
+            Log::info('[CategoriaProduto] Iniciando remoção da categoria', [
+                'category_id' => $id,
+                'user_id'     => auth()->id()
+            ]);
 
-        return response()->json(null, 204);
+            $success = $this->service->delete($id);
+
+            if (! $success) {
+                Log::warning('[CategoriaProduto] Falha ao remover categoria', [
+                    'category_id' => $id
+                ]);
+
+                return response()->json(['message' => 'Não foi possível remover a categoria de produto'], 400);
+            }
+
+            Log::info('[CategoriaProduto] Categoria removida com sucesso', [
+                'category_id' => $id
+            ]);
+
+            return response()->json(null, 204);
+        } catch (Throwable $e) {
+            Log::error('[CategoriaProduto] Erro ao remover categoria', [
+                'category_id' => $id,
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json(['message' => 'Erro ao remover categoria de produto.'], 500);
+        }
     }
 }
