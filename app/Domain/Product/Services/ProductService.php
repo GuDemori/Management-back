@@ -6,7 +6,9 @@ use App\Domain\Product\DTOs\ProductDTO;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class ProductService
 {
@@ -15,7 +17,7 @@ class ProductService
         $query = Product::query()
             ->with(['supplier', 'category', 'nicknames'])
             ->where('is_active', true);
-    
+
         if ($stockId) {
             $query->withSum(['productStocks as stock_quantity' => function ($q) use ($stockId) {
                 $q->where('is_active', true)->where('stock_id', $stockId);
@@ -49,22 +51,33 @@ class ProductService
 
     public function create(ProductDTO $data): Product
     {
-        if ($data->image instanceof UploadedFile) {
-            $path = Storage::disk('s3')->putFile('products', $data->image);
-            $data->image_url = Storage::disk('s3')->url($path);
-        }
+        try {
+            if ($data->image instanceof UploadedFile) {
+                $path = Storage::disk('s3')->putFile('products', $data->image);
+                $data->image_url = Storage::disk('s3')->url($path);
+            }
 
-        return Product::create([
-            'supplier_id'         => $data->supplier_id,
-            'product_category_id' => $data->product_category_id,
-            'name'                => $data->name,
-            'description'         => $data->description,
-            'image_url'           => $data->image_url,
-            'costs'               => $data->costs,
-            'wholesale_price'     => $data->wholesale_price,
-            'retail_price'        => $data->retail_price,
-        ]);
+            return Product::create([
+                'supplier_id'         => $data->supplier_id,
+                'product_category_id' => $data->product_category_id,
+                'name'                => $data->name,
+                'description'         => $data->description,
+                'image_url'           => $data->image_url,
+                'costs'               => $data->costs,
+                'wholesale_price'     => $data->wholesale_price,
+                'retail_price'        => $data->retail_price,
+            ]);
+        } catch (Throwable $e) {
+            Log::error('[Produto] Erro ao criar produto', [
+                'nome'  => $data->name,
+                'erro'  => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            throw $e;
+        }
     }
+
 
     public function update(int $id, ProductDTO $data): Product
     {
